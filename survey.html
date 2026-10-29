@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Опитування вчителів — теми для магістерських досліджень</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F0F4F8;
+    --surface: #ffffff;
+    --accent: #2B4EBF;
+    --accent-light: #E8EDFC;
+    --text: #1A1F2E;
+    --muted: #6B7490;
+    --border: #D6DCE8;
+    --success: #1E8A5C;
+    --success-bg: #E6F4EE;
+    --error: #C0392B;
+
+    --r: 10px;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111827;
+      --surface: #1E2535;
+      --accent: #5B7FE8;
+      --accent-light: #1E2A4A;
+      --text: #EDF0F7;
+      --muted: #8B96B5;
+      --border: #2E3A52;
+      --success: #34C085;
+      --success-bg: #0D2E20;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100%;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 48px 24px 40px;
+    text-align: center;
+  }
+  header .tag {
+    display: inline-block;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 10px;
+    letter-spacing: .1em;
+    background: rgba(255,255,255,.18);
+    color: #fff;
+    border-radius: 20px;
+    padding: 4px 14px;
+    margin-bottom: 20px;
+  }
+  header h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 600;
+    line-height: 1.25;
+    max-width: 640px;
+    margin: 0 auto 16px;
+  }
+  header p {
+    font-size: .95rem;
+    color: rgba(255,255,255,.8);
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  /* PROGRESS */
+  #progress-bar-wrap {
+    background: var(--border);
+    height: 4px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  #progress-bar {
+    height: 4px;
+    background: var(--accent);
+    width: 0%;
+    transition: width .4s ease;
+  }
+
+  /* LAYOUT */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* STEPS */
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .step-header {
+    margin-bottom: 28px;
+  }
+  .step-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: .7rem;
+    color: var(--accent);
+    letter-spacing: .08em;
+    margin-bottom: 6px;
+  }
+  .step-header h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 28px;
+    margin-bottom: 16px;
+  }
+
+  /* FORM FIELDS */
+  label.field-label {
+    display: block;
+    font-size: .9rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  label.field-label .req { color: var(--accent); margin-left: 2px; }
+
+  .hint { font-size: .82rem; color: var(--muted); margin-bottom: 10px; }
+
+  select, input[type="text"], textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    padding: 10px 14px;
+    font-size: .95rem;
+    font-family: inherit;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+    appearance: none;
+  }
+  select:focus, input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+  }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7490' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  textarea { resize: vertical; min-height: 100px; }
+
+  .field-group { margin-bottom: 20px; }
+  .field-group:last-child { margin-bottom: 0; }
+
+  /* RADIO / CHECKBOX */
+  .options-list { display: flex; flex-direction: column; gap: 8px; }
+  .option-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .option-item:hover { border-color: var(--accent); }
+  .option-item.selected { border-color: var(--accent); background: var(--accent-light); }
+  .option-item input { display: none; }
+  .option-check {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color .15s, background .15s;
+  }
+  .option-item.selected .option-check {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+  .option-check::after {
+    content: '';
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #fff;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+  .option-item.selected .option-check::after { opacity: 1; }
+  .option-check.sq { border-radius: 4px; }
+  .option-check.sq::after { border-radius: 2px; }
+  .option-text { font-size: .93rem; line-height: 1.45; }
+
+  /* RATING TABLE */
+  .rating-table { width: 100%; border-collapse: collapse; }
+  .rating-table th {
+    font-size: .78rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-align: center;
+    padding: 6px 4px 10px;
+    white-space: nowrap;
+  }
+  .rating-table th:first-child { text-align: left; }
+  .rating-table td {
+    padding: 10px 4px;
+    border-top: 1px solid var(--border);
+    font-size: .88rem;
+    vertical-align: middle;
+  }
+  .rating-table td:first-child { padding-right: 12px; line-height: 1.4; }
+  .rating-table tr:hover td { background: var(--bg); }
+  .star-row { display: flex; justify-content: center; gap: 4px; }
+  .star {
+    width: 28px; height: 28px;
+    cursor: pointer;
+    fill: var(--border);
+    transition: fill .1s, transform .1s;
+  }
+  .star:hover, .star.active { fill: #F5A623; }
+  .star:hover { transform: scale(1.15); }
+
+  /* CHECKBOX GRID */
+  .check-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+
+  /* NAVIGATION */
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    gap: 12px;
+  }
+  button.btn {
+    font-family: 'Unbounded', sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .03em;
+    padding: 13px 28px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  button.btn:active { transform: scale(.98); }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: .88; }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* SUCCESS */
+  #success {
+    display: none;
+    text-align: center;
+    padding: 64px 24px;
+  }
+  .success-icon {
+    width: 72px; height: 72px;
+    background: var(--success-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 2rem;
+  }
+  #success h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+  #success p { color: var(--muted); max-width: 400px; margin: 0 auto; }
+
+  /* VALIDATION */
+  .error-msg { font-size: .82rem; color: var(--error); margin-top: 6px; display: none; }
+  .has-error select, .has-error input, .has-error textarea { border-color: var(--error); }
+  .has-error .error-msg { display: block; }
+
+  @media (max-width: 540px) {
+    header { padding: 36px 20px 32px; }
+    .card { padding: 20px 16px; }
+    .rating-table { font-size: .82rem; }
+    .star { width: 22px; height: 22px; }
+    .check-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">Черкаський національний університет</div>
+  <h1>Які теми важливо дослідити у методиці навчання?</h1>
+  <p>Опитування для вчителів фізики, інформатики та астрономії. Ваші відповіді визначать теми магістерських досліджень студентів ЧНУ.</p>
+</header>
+
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+
+<main>
+
+  <!-- STEP 1 -->
+  <div class="step active" id="step-1">
+    <div class="step-header">
+      <div class="step-num">Крок 1 з 4</div>
+      <h2>Розкажіть трохи про себе</h2>
+    </div>
+    <div class="card">
+      <div class="field-group">
+        <label class="field-label">Який предмет(и) ви викладаєте? <span class="req">*</span></label>
+        <div class="options-list" id="subjects">
+          <label class="option-item" onclick="toggleCheck(this,'subjects')">
+            <input type="checkbox" value="Фізика">
+            <span class="option-check sq"></span>
+            <span class="option-text">Фізика</span>
+          </label>
+          <label class="option-item" onclick="toggleCheck(this,'subjects')">
+            <input type="checkbox" value="Інформатика">
+            <span class="option-check sq"></span>
+            <span class="option-text">Інформатика</span>
+          </label>
+          <label class="option-item" onclick="toggleCheck(this,'subjects')">
+            <input type="checkbox" value="Астрономія">
+            <span class="option-check sq"></span>
+            <span class="option-text">Астрономія</span>
+          </label>
+          <label class="option-item" onclick="toggleCheck(this,'subjects')">
+            <input type="checkbox" value="Математика">
+            <span class="option-check sq"></span>
+            <span class="option-text">Математика</span>
+          </label>
+        </div>
+        <div class="error-msg" id="err-subjects">Будь ласка, оберіть принаймні один предмет</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="experience">Педагогічний стаж <span class="req">*</span></label>
+        <select id="experience">
+          <option value="">— оберіть варіант —</option>
+          <option>До 5 років</option>
+          <option>5–15 років</option>
+          <option>Понад 15 років</option>
+        </select>
+        <div class="error-msg" id="err-experience">Будь ласка, оберіть стаж</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="school-type">Тип закладу освіти <span class="req">*</span></label>
+        <select id="school-type">
+          <option value="">— оберіть варіант —</option>
+          <option>Загальноосвітня школа (місто)</option>
+          <option>Загальноосвітня школа (село)</option>
+          <option>Гімназія / ліцей</option>
+          <option>Профільний ліцей</option>
+          <option>Інше</option>
+        </select>
+        <div class="error-msg" id="err-school-type">Будь ласка, оберіть тип закладу</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Чи є у вас профільні класи або старша профільна школа?</label>
+        <div class="options-list" id="profile-class">
+          <label class="option-item" onclick="toggleRadio(this,'profile-class')">
+            <input type="radio" name="profile-class" value="Так">
+            <span class="option-check"></span>
+            <span class="option-text">Так</span>
+          </label>
+          <label class="option-item" onclick="toggleRadio(this,'profile-class')">
+            <input type="radio" name="profile-class" value="Ні">
+            <span class="option-check"></span>
+            <span class="option-text">Ні</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <span></span>
+      <button class="btn btn-primary" onclick="goTo(2)">Далі →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" id="step-2">
+    <div class="step-header">
+      <div class="step-num">Крок 2 з 4</div>
+      <h2>Актуальні виклики у вашій практиці</h2>
+    </div>
+    <div class="card">
+      <div class="field-group">
+        <label class="field-label" for="challenges">Які 2–3 теми або задачі у вашій педагогічній практиці є найскладнішими прямо зараз? <span class="req">*</span></label>
+        <div class="hint">Пишіть вільно — конкретні ситуації, учні, програми, що завгодно</div>
+        <textarea id="challenges" rows="4" placeholder="Наприклад: важко пояснити квантову фізику без математичного апарату; учні не розуміють, навіщо вивчати алгоритми…"></textarea>
+        <div class="error-msg" id="err-challenges">Будь ласка, заповніть це поле</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="frustration">Що у роботі забирає найбільше сил, але дає найменше результату?</label>
+        <textarea id="frustration" rows="3" placeholder="Наприклад: перевірка однотипних завдань, паперова звітність, підготовка до НМТ за рахунок глибини вивчення предмета…"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="unsolved">Що, на вашу думку, не вирішено у методиці викладання вашого предмета — те, що «всі знають, але ніхто не досліджує»?</label>
+        <textarea id="unsolved" rows="3" placeholder="Ваш погляд зсередини практики — найцінніший для дослідника"></textarea>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn btn-ghost" onclick="goTo(1)">← Назад</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Далі →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" id="step-3">
+    <div class="step-header">
+      <div class="step-num">Крок 3 з 4</div>
+      <h2>Оцініть напрями для досліджень</h2>
+    </div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:20px;">Позначте зірками, наскільки кожен напрям актуальний особисто для вас (1 — не важливо, 5 — дуже актуально)</p>
+
+    <div class="card" style="overflow-x:auto;">
+      <table class="rating-table" id="ratings-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Напрям</th>
+            <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
+          </tr>
+        </thead>
+        <tbody id="ratings-body"></tbody>
+      </table>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-ghost" onclick="goTo(2)">← Назад</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Далі →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" id="step-4">
+    <div class="step-header">
+      <div class="step-num">Крок 4 з 4</div>
+      <h2>Очікування від магістерських досліджень</h2>
+    </div>
+    <div class="card">
+      <div class="field-group">
+        <label class="field-label">Який формат результату дослідження був би вам корисним? <span class="req">*</span></label>
+        <div class="hint">Можна обрати кілька</div>
+        <div class="options-list" id="result-format">
+          <label class="option-item" onclick="toggleCheck(this,'result-format')">
+            <input type="checkbox" value="Методичний посібник / рекомендації">
+            <span class="option-check sq"></span>
+            <span class="option-text">Методичний посібник / рекомендації</span>
+          </label>
+          <label class="option-item" onclick="toggleCheck(this,'result-format')">
+            <input type="checkbox" value="Готові розробки уроків">
+            <span class="option-check sq"></span>
+            <span class="option-text">Готові розробки уроків</span>
+          </label>
+          <label class="option-item" onclick="toggleCheck(this,'result-format')">
+            <input type="checkbox" value="Діагностичні інструменти (тести, анкети)">
+            <span class="option-check sq"></span>
+            <span class="option-text">Діагностичні інструменти (тести, анкети)</span>
+          </label>
+          <label class="option-item" onclick="toggleCheck(this,'result-format')">
+            <input type="checkbox" value="Аналіз ситуації + висновки">
+            <span class="option-check sq"></span>
+            <span class="option-text">Аналіз ситуації + висновки</span>
+          </label>
+          <label class="option-item" onclick="toggleCheck(this,'result-format')">
+            <input type="checkbox" value="Практичні воркшопи / вебінари">
+            <span class="option-check sq"></span>
+            <span class="option-text">Практичні воркшопи / вебінари</span>
+          </label>
+        </div>
+        <div class="error-msg" id="err-result-format">Будь ласка, оберіть принаймні один варіант</div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Чи готові ви співпрацювати з магістрантом у процесі дослідження?</label>
+        <div class="options-list" id="collaborate">
+          <label class="option-item" onclick="toggleRadio(this,'collaborate')">
+            <input type="radio" name="collaborate" value="Так, готовий/готова">
+            <span class="option-check"></span>
+            <span class="option-text">Так, готовий/готова (надати клас, заповнювати анкети, давати інтерв'ю)</span>
+          </label>
+          <label class="option-item" onclick="toggleRadio(this,'collaborate')">
+            <input type="radio" name="collaborate" value="Частково">
+            <span class="option-check"></span>
+            <span class="option-text">Частково — залежно від теми та навантаження</span>
+          </label>
+          <label class="option-item" onclick="toggleRadio(this,'collaborate')">
+            <input type="radio" name="collaborate" value="Ні">
+            <span class="option-check"></span>
+            <span class="option-text">Поки що ні</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="question">Напишіть одне конкретне питання, на яке хотіли б отримати науково обґрунтовану відповідь</label>
+        <div class="hint">Це може стати темою чийогось магістерського дослідження</div>
+        <textarea id="question" rows="3" placeholder="Наприклад: «Як підтримувати інтерес учнів до фізики після 9 класу, коли вона стає абстрактнішою?»"></textarea>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-ghost" onclick="goTo(3)">← Назад</button>
+      <button class="btn btn-primary" onclick="submit()">Надіслати відповіді</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success">
+    <div class="success-icon">✓</div>
+    <h2>Дякуємо за відповіді!</h2>
+    <p style="margin-bottom:12px;">Ваш досвід допоможе магістрантам ЧНУ обрати справді актуальні теми для досліджень.</p>
+    <p style="color:var(--muted);font-size:.88rem;">Агреговані результати будуть представлені на підсумку семінару.</p>
+  </div>
+
+</main>
+
+<script>
+const TOPICS = [
+  'Мотивація учнів до вивчення предмета',
+  'Використання ШІ-інструментів на уроці',
+  'Диференціація навчання / різні рівні підготовки',
+  'Профільне навчання: побудова та реалізація',
+  'Формувальне оцінювання',
+  'Дистанційне / змішане навчання',
+  'STEM та міжпредметна інтеграція',
+  'Проєктна та дослідницька діяльність учнів',
+  'Підготовка до НМТ у профільних класах',
+  'Навчання в умовах воєнного часу',
+  'Розвиток критичного мислення',
+  'Робота з обдарованими учнями',
+];
+
+const ratings = {};
+
+function buildRatings() {
+  const tbody = document.getElementById('ratings-body');
+  TOPICS.forEach((topic, i) => {
+    ratings[i] = 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${topic}</td>` +
+      [1,2,3,4,5].map(n => `
+        <td>
+          <div class="star-row">
+            <svg class="star" data-topic="${i}" data-val="${n}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+              onclick="setRating(${i},${n})">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+        </td>`).join('');
+    tbody.appendChild(tr);
+  });
+}
+
+function setRating(topic, val) {
+  ratings[topic] = val;
+  document.querySelectorAll(`.star[data-topic="${topic}"]`).forEach(s => {
+    s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+  });
+}
+
+function toggleRadio(el, group) {
+  document.querySelectorAll(`#${group} .option-item`).forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+}
+
+function toggleCheck(el, group) {
+  el.classList.toggle('selected');
+  el.querySelector('input').checked = el.classList.contains('selected');
+}
+
+let currentStep = 1;
+const totalSteps = 4;
+
+function goTo(n) {
+  if (n > currentStep && !validate(currentStep)) return;
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  currentStep = n;
+  document.getElementById(`step-${currentStep}`).classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  document.getElementById('progress-bar').style.width =
+    ((currentStep - 1) / totalSteps * 100) + '%';
+}
+
+function validate(step) {
+  let ok = true;
+  if (step === 1) {
+    const checked = [...document.querySelectorAll('#subjects input:checked')];
+    setErr('err-subjects', !checked.length, '#subjects');
+    if (!checked.length) ok = false;
+
+    const exp = document.getElementById('experience').value;
+    setErr('err-experience', !exp, null);
+    if (!exp) ok = false;
+
+    const stype = document.getElementById('school-type').value;
+    setErr('err-school-type', !stype, null);
+    if (!stype) ok = false;
+  }
+  if (step === 2) {
+    const ch = document.getElementById('challenges').value.trim();
+    setErr('err-challenges', !ch, null);
+    if (!ch) ok = false;
+  }
+  if (step === 4) {
+    const fmt = [...document.querySelectorAll('#result-format input:checked')];
+    setErr('err-result-format', !fmt.length, '#result-format');
+    if (!fmt.length) ok = false;
+  }
+  return ok;
+}
+
+function setErr(id, show, groupSel) {
+  document.getElementById(id).style.display = show ? 'block' : 'none';
+  if (groupSel) {
+    const el = document.querySelector(groupSel);
+    if (el) el.classList.toggle('has-error', show);
+  }
+}
+
+function submit() {
+  if (!validate(4)) return;
+  // collect data
+  const data = {
+    subjects: [...document.querySelectorAll('#subjects input:checked')].map(i => i.value),
+    experience: document.getElementById('experience').value,
+    schoolType: document.getElementById('school-type').value,
+    profileClass: (document.querySelector('#profile-class input:checked') || {}).value || '',
+    challenges: document.getElementById('challenges').value,
+    frustration: document.getElementById('frustration').value,
+    unsolved: document.getElementById('unsolved').value,
+    ratings: Object.fromEntries(TOPICS.map((t,i) => [t, ratings[i]])),
+    resultFormat: [...document.querySelectorAll('#result-format input:checked')].map(i => i.value),
+    collaborate: (document.querySelector('#collaborate input:checked') || {}).value || '',
+    question: document.getElementById('question').value,
+    timestamp: new Date().toISOString(),
+  };
+  // data collected in memory for this session only
+  window._lastResponse = data;
+
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  document.getElementById('success').style.display = 'block';
+  document.getElementById('progress-bar').style.width = '100%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildRatings();
+updateProgress();
+</script>
+</body>
+</html>
